@@ -7,8 +7,11 @@ them before relying on live results.
 import os
 from dotenv import load_dotenv
 
-# Load .env from the project root (ignored if the file doesn't exist).
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
+# Load .env first (dev defaults), then .env.production (production overrides).
+# Both files are git-ignored. .env.production takes precedence when present.
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(_ROOT, ".env"))
+load_dotenv(os.path.join(_ROOT, ".env.production"), override=True)
 
 # --- Indicator parameters --------------------------------------------------
 MA_PERIOD = 200          # Close must be above the 200-period SMA (daily)

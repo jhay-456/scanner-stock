@@ -22,7 +22,8 @@ def format_message(results: List[ScreenResult], scanned: int, skipped: int) -> s
         "",
     ]
     if not matches:
-        lines.append("No stocks matched today's criteria.")
+        lines.append("วันนี้ไม่มีหุ้นผ่านเงื่อนไข 📭")
+        lines.append("(No stocks matched today's criteria)")
     else:
         for r in sorted(matches, key=lambda r: r.ticker):
             sym = r.ticker.replace(".BK", "")
