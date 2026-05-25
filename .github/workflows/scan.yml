@@ -1,0 +1,24 @@
+name: Daily Thai Stock Scan
+
+on:
+  schedule:
+    # 11:00 UTC = 18:00 ICT (UTC+7), Mon–Fri, after the 16:30 SET close.
+    # NOTE: GitHub Actions cron is UTC and may be delayed under load.
+    - cron: "0 11 * * 1-5"
+  workflow_dispatch: {}   # allow manual runs from the Actions tab
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run scan and notify LINE
+        env:
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_TARGET: ${{ secrets.LINE_TARGET }}   # "broadcast" or a userId/groupId
+        run: python -m src.main
