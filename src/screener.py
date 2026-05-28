@@ -47,8 +47,9 @@ def evaluate(ticker: str, df: pd.DataFrame) -> Optional[ScreenResult]:
 
     close, high, low = df["Close"], df["High"], df["Low"]
 
-    ma = indicators.sma(close, config.MA_PERIOD)
-    rsi_s = indicators.rsi(close, config.RSI_PERIOD)
+    ma_fn = indicators.ema if config.MA_TYPE == "ema" else indicators.sma
+    ma = ma_fn(close, config.MA_PERIOD)
+    rsi_s = indicators.rsi(close, config.RSI_PERIOD, config.RSI_SMOOTH)
     k, d = indicators.stochastic(
         high, low, close,
         config.STOCH_K_PERIOD, config.STOCH_K_SMOOTH, config.STOCH_D_PERIOD,

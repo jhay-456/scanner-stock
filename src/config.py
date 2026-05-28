@@ -14,15 +14,17 @@ load_dotenv(os.path.join(_ROOT, ".env"))
 load_dotenv(os.path.join(_ROOT, ".env.production"), override=True)
 
 # --- Indicator parameters --------------------------------------------------
-MA_PERIOD = 200          # Close must be above the 200-period SMA (daily)
+MA_PERIOD = 200          # Close must be above the 200-period moving average
+MA_TYPE   = "sma"        # "sma" (default) or "ema" — change to match your chart
 RSI_PERIOD = 14
 RSI_LOWER = 50           # exclusive: 50 < RSI < 80
 RSI_UPPER = 80
-STOCH_K_PERIOD = 14      # %K lookback
-STOCH_K_SMOOTH = 3       # %K smoothing (slow stochastic)
+RSI_SMOOTH = "ema"       # "rma" = Wilder (TradingView default), "ema" = EMA-based
+STOCH_K_PERIOD = 9       # %K lookback — changed from 14 to match streaming platform
+STOCH_K_SMOOTH = 3       # %K smoothing
 STOCH_D_PERIOD = 3       # %D smoothing
 STOCH_THRESHOLD = 30     # Stoch must be below this
-STOCH_LINE = "k"         # DEFAULT: test the "k" line (%K). Set to "d" for %D.
+STOCH_LINE = "k"         # "k" for %K line, "d" for %D line
 
 # Swing detection: a pivot is confirmed when it is the extreme over this many
 # bars on each side. DEFAULT = 5. Larger = fewer, more significant swings.
