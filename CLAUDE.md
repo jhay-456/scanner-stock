@@ -48,7 +48,8 @@ data/tickers.txt (931 symbols)
 
 Modules under `src/`:
 - [`config.py`](src/config.py) — all tunable parameters (indicator periods, LINE env vars, DRY_RUN)
-- [`data.py`](src/data.py) — `load_tickers()` + `fetch_batch()` (batch) / `fetch_history()` (single)
+- [`data.py`](src/data.py) — `load_tickers()` + `fetch_batch()` (batch) / `fetch_history()` (single) — Yahoo Finance
+- [`data_settrade.py`](src/data_settrade.py) — `fetch_history()` via Settrade REST API (~117 bars, RSI/Stoch only)
 - [`indicators.py`](src/indicators.py) — SMA, EMA, RMA, RSI (RMA or EMA smooth), Stochastic — hand-written, no TA-Lib
 - [`swings.py`](src/swings.py) — `swing_highs()` / `swing_lows()` → `is_higher_high()` / `is_higher_low()`
 - [`screener.py`](src/screener.py) — `passes_criteria()` (pure, testable) + `evaluate()` (full pipeline)
@@ -57,11 +58,11 @@ Modules under `src/`:
 
 ## Data
 
-- **Source**: Yahoo Finance via `yfinance`, tickers with `.BK` suffix (e.g. `PTT.BK`)
-- **Prices**: `auto_adjust=False` — raw unadjusted prices. Do **not** change to `auto_adjust=True`.
+- **Batch scanner source**: Yahoo Finance via `yfinance` — `auto_adjust=False` (raw prices). Do **not** change to `auto_adjust=True`. 2-year history needed for MA200.
+- **check_stock.py source**: Settrade (`www.settrade.com` API, same approach as UncleEngineer/ThaiStock) — ~117 bars of official SET data. RSI/Stoch from Settrade are closer to Thai broker streaming platforms. MA200 still pulled from Yahoo (needs 200+ bars).
 - **Universe**: 931 tickers fetched from SET's API — refresh with `python scripts/fetch_tickers.py`
 - **History period**: `HISTORY_PERIOD = "2y"` — needed for MA200 warm-up + swing context
-- **Data source note**: Yahoo Finance and SET's own historical API return identical OHLCV for most stocks. Differences vs Thai broker streaming platforms (e.g. Stochastic diverging by >10 points) are caused by the streaming platform using different data or settings — not a code bug.
+- **Data source note**: Yahoo Finance and Settrade return identical OHLCV. Stochastic differences vs streaming platforms are caused by the streaming platform using different data or settings — not a code bug.
 
 ## Indicator implementation notes
 
@@ -111,10 +112,11 @@ python -m src.main --dry-run --limit 10
 # Verify LINE token is valid (no message sent)
 python -m src.main --test-line
 
-# Verify indicator values for one stock (compare vs streaming platform)
-python scripts/check_stock.py SCC
-python scripts/check_stock.py TTB --rows 10
-python scripts/check_stock.py TOP --ema   # force EMA200 check
+# Verify indicator values for one stock (Settrade data by default)
+python scripts/check_stock.py TTB           # RSI+Stoch from Settrade, MA200 from Yahoo
+python scripts/check_stock.py TOP --rows 10
+python scripts/check_stock.py SCC --yahoo   # force all data from Yahoo Finance
+python scripts/check_stock.py SCC --ema     # force EMA200 for screener check
 
 # Refresh ticker universe from SET's API (931 symbols)
 python scripts/fetch_tickers.py
