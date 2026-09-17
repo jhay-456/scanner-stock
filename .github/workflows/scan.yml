@@ -1,10 +1,10 @@
 name: Daily Thai Stock Scan
 
 on:
-  schedule:
-    # 11:00 UTC = 18:00 ICT (UTC+7), Mon–Fri, after the 16:30 SET close.
-    # NOTE: GitHub Actions cron is UTC and may be delayed under load.
-    - cron: "0 11 * * 1-5"
+  # schedule:
+  #   # 11:00 UTC = 18:00 ICT (UTC+7), Mon–Fri, after the 16:30 SET close.
+  #   # NOTE: GitHub Actions cron is UTC and may be delayed under load.
+  #   - cron: "0 11 * * 1-5"
   workflow_dispatch: {}   # allow manual runs from the Actions tab
 
 jobs:
